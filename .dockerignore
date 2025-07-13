@@ -1,0 +1,9 @@
+*.iso
+*.md
+*.qcow2
+*.sh
+.dockerignore
+.git
+Dockerfile
+*.un~
+*.swp
