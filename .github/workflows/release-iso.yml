@@ -1,0 +1,51 @@
+name: Release ISO
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # needed to upload release assets
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract tag name
+        id: vars
+        run: echo "tag=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image
+        run: |
+          docker build -t boot2docker:${{ steps.vars.outputs.tag }} .
+
+      - name: Extract ISO from container
+        run: |
+          mkdir -p build
+          docker run --rm boot2docker:${{ steps.vars.outputs.tag }} > build/boot2docker.iso
+
+      - name: Generate SHA256 checksum
+        run: |
+          cd build
+          sha256sum boot2docker.iso > boot2docker.iso.sha256
+
+      - name: Create source tarball
+        run: |
+          git archive --format=tar.gz --prefix=boot2docker-${{ steps.vars.outputs.tag }}/ \
+            -o build/boot2docker-${{ steps.vars.outputs.tag }}.tar.gz ${{ steps.vars.outputs.tag }}
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/boot2docker.iso
+            build/boot2docker.iso.sha256
+            build/boot2docker-${{ steps.vars.outputs.tag }}.tar.gz
