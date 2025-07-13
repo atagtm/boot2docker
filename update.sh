@@ -26,7 +26,6 @@ update_env() {
 }
 
 restore_and_exit() {
-    cp -f $SCRIPT.$NOW $SCRIPT
     mv $SCRIPT.$NOW $SCRIPT.err
     echo "An error has occurred, check '$SCRIPT.err' and find out what is going on."
     echo "The file '$SCRIPT' has NOT been modified!!!"
