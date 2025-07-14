@@ -127,6 +127,7 @@ RUN mkdir -p proc; \
 ENV SQUASHFS_VERSION=4.7
 RUN wget -O squashfs.tgz "https://github.com/plougher/squashfs-tools/archive/$SQUASHFS_VERSION.tar.gz"; \
 	tar --directory=/usr/src --extract --file=squashfs.tgz; \
+ 	rm squashfs.tgz; \
 	make -C "/usr/src/squashfs-tools-$SQUASHFS_VERSION/squashfs-tools" \
 		-j "$(nproc)" \
 # https://github.com/plougher/squashfs-tools/blob/4.4/squashfs-tools/Makefile#L1
