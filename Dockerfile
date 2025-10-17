@@ -40,12 +40,12 @@ WORKDIR /rootfs
 # updated via "update.sh"
 ENV TCL_MIRRORS="http://repo.tinycorelinux.net http://distro.ibiblio.org/tinycorelinux"
 ENV TCL_MAJOR="16.x"
-ENV TCL_VERSION="16.1"
+ENV TCL_VERSION="16.2"
 
 # http://distro.ibiblio.org/tinycorelinux/8.x/x86_64/archive/8.2.1/distribution_files/rootfs64.gz.md5.txt
 # updated via "update.sh"
 ENV TCL_ROOTFS="rootfs64.gz"
-ENV TCL_ROOTFS_MD5="19f608c47f2c91937fea80d88a42e43d"
+ENV TCL_ROOTFS_MD5="6248a15427895b2fe9bcd47670162b2e"
 
 COPY files/tce-load.patch files/udhcpc.patch /tcl-patches/
 
@@ -67,12 +67,11 @@ RUN for mirror in $TCL_MIRRORS; do \
 		--no-absolute-filenames \
 	; \
 	rm /rootfs.gz; \
-	\
 	for patch in /tcl-patches/*.patch; do \
 		patch \
-			--input "$patch" \
-			--strip 1 \
-			--verbose \
+		--input "$patch" \
+		--strip 1 \
+		--verbose \
 		; \
 	done; \
 	\
@@ -175,7 +174,7 @@ RUN tcl-tce-load bash; \
 	[ "$PS1" = '\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ ' ]
 
 # updated via "update.sh"
-ENV LINUX_VERSION="6.12.37"
+ENV LINUX_VERSION="6.12.53"
 
 RUN wget -O /linux.tar.xz "https://cdn.kernel.org/pub/linux/kernel/v${LINUX_VERSION%%.*}.x/linux-${LINUX_VERSION}.tar.xz"; \
 	wget -O /linux.tar.asc "https://cdn.kernel.org/pub/linux/kernel/v${LINUX_VERSION%%.*}.x/linux-${LINUX_VERSION}.tar.sign"; \
@@ -316,9 +315,9 @@ RUN make -C /usr/src/linux INSTALL_HDR_PATH=/usr/local headers_install
 
 # http://download.virtualbox.org/virtualbox/
 # updated via "update.sh"
-ENV VBOX_VERSION="7.1.10"
+ENV VBOX_VERSION="7.2.2"
 # https://www.virtualbox.org/download/hashes/$VBOX_VERSION/SHA256SUMS
-ENV VBOX_SHA256="59c92f7f5fd7e081211e989f5117fc53ad8d8800ad74a01b21e97bb66fe62972"
+ENV VBOX_SHA256="42457487fb5f117265fe41bf8b2a521449c2cff75c95029d8f667f7dab5a4409"
 # (VBoxGuestAdditions_X.Y.Z.iso SHA256, for verification)
 
 RUN wget -O /vbox.iso "https://download.virtualbox.org/virtualbox/$VBOX_VERSION/VBoxGuestAdditions_$VBOX_VERSION.iso"; \
@@ -344,7 +343,7 @@ RUN make -C /usr/src/vbox/amd64/src/vboxguest -j "$(nproc)" \
 # scan all built modules for kernel loading
 RUN tcl-chroot depmod "$(< /usr/src/linux/include/config/kernel.release)"
 
-ENV DOCKER_VERSION="28.3.2"
+ENV DOCKER_VERSION="28.5.1"
 
 # Get the Docker binaries with version that matches our boot2docker version.
 RUN DOCKER_CHANNEL='stable'; \

@@ -9,7 +9,7 @@
  	if [ "$?" == 0 ]; then
  		if [ "$(ls -A /mnt/test)" ]; then
  			yes "$FORCE" | sudo /bin/cp -ai /mnt/test/. / 2>/dev/null
- 			[ -n "`find /mnt/test/ -type d -name modules`" ] && MODULES=TRUE
+			[ -d /mnt/test/usr/local/lib/modules/$KERNELVER ] && MODULES=TRUE
  		fi
 -		sudo /bin/umount -d /mnt/test
 +		sudo rm -fr /mnt/test
