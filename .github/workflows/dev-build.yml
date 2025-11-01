@@ -1,0 +1,35 @@
+name: Boot2Docker Dev Build
+
+on:
+  push:
+    branches:
+      - "dev/**"   # build only when pushing to dev/* branches
+  workflow_dispatch: # manual trigger if needed
+
+jobs:
+  build-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (dev)
+        run: |
+          docker build -t boot2docker:dev .
+
+      - name: Extract ISO from container
+        run: |
+          mkdir -p build
+          docker run --rm boot2docker:dev > build/boot2docker-dev.iso
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: boot2docker-dev-iso
+          path: build/boot2docker-dev.iso
+          retention-days: 7
+
