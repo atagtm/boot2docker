@@ -43,9 +43,6 @@ update_env TCL_VERSION "$version"
 # https://www.kernel.org/
 kernelBase='6.12'
 # https://github.com/boot2docker/boot2docker/issues/1398
-# https://download.virtualbox.org/virtualbox/
-## v7 is bugged, v6 is just fine for us...
-vboxBase='6'
 
 # avoid issues with slow Git HTTP interactions (*cough* sourceforge *cough*)
 export GIT_HTTP_LOW_SPEED_LIMIT='100'
@@ -98,14 +95,18 @@ kernelVersion="$(
 )"
 update_env LINUX_VERSION "$kernelVersion"
 
+# https://download.virtualbox.org/virtualbox/
+vboxBase='7'
+
 #vboxVersion="$(wget -qO- 'https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT')"
-vboxVersion="$(
-	wget -qO- 'https://download.virtualbox.org/virtualbox/' \
-		| grep -oE 'href="[0-9.]+/?"' \
-		| cut -d'"' -f2 | cut -d/ -f1 \
-		| grep -E "^$vboxBase[.]" \
-		| tail -1
-)"
+#vboxVersion="$(
+#	wget -qO- 'https://download.virtualbox.org/virtualbox/' \
+#		| grep -oE 'href="[0-9.]+/?"' \
+#		| cut -d'"' -f2 | cut -d/ -f1 \
+#		| grep -E "^$vboxBase[.]" \
+#		| tail -1
+#)"
+vboxVersion="7.0.26"
 vboxSha256="$(
 	{
 		wget -qO- "https://download.virtualbox.org/virtualbox/$vboxVersion/SHA256SUMS" \
