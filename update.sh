@@ -44,7 +44,8 @@ update_env TCL_VERSION "$version"
 kernelBase='6.12'
 # https://github.com/boot2docker/boot2docker/issues/1398
 # https://download.virtualbox.org/virtualbox/
-vboxBase='7'
+## v7 is bugged, v6 is just fine for us...
+vboxBase='6'
 
 # avoid issues with slow Git HTTP interactions (*cough* sourceforge *cough*)
 export GIT_HTTP_LOW_SPEED_LIMIT='100'
@@ -113,6 +114,13 @@ vboxSha256="$(
 )"
 update_env VBOX_VERSION "$vboxVersion"
 update_env VBOX_SHA256 "$vboxSha256"
+
+dockerVersion="$(
+	wget -qO- "https://api.github.com/repos/moby/moby/releases/latest" |
+	grep '"tag_name":' |
+	sed -E 's/.*"v([^"]+)".*/\1/'                
+)"
+update_env DOCKER_VERSION "$dockerVersion"
 
 # Save the updated file
 mv $SCRIPT $SCRIPT.tmp
