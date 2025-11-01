@@ -331,35 +331,24 @@ RUN wget -O /vbox.iso "https://download.virtualbox.org/virtualbox/$VBOX_VERSION/
 	ln -sT "vboxguest-$VBOX_VERSION" /usr/src/vbox/amd64/src/vboxguest
 
 RUN set -eux; \
-	cd /usr/src/vbox/amd64/src/vboxguest; \
-# ---- PATCH 1: kernel 6.6+ API changes ----
-	sed -i 's/no_llseek/noop_llseek/' vboxguest/VBoxGuest-linux.c; \
-	sed -i 's/strlcpy/strscpy/' vboxguest/VBoxGuest-linux.c; \
-	printf '\n#ifndef p4d_large\n# define p4d_large(x) false\n#endif\n' \
-		'#ifndef pud_large\n# define pud_large(x) false\n#endif\n' \
-		'#ifndef pmd_large\n# define pmd_large(x) false\n#endif\n' \
-		>> vboxguest/r0drv/linux/memobj-r0drv-linux.c; \
-# ---- PATCH 2: disable -Werror ----
-	sed -i 's/-Werror//' vboxguest/Makefile; \
-# ---- build ----
-	make -C /usr/src/linux \
-		M=/usr/src/vbox/amd64/src/vboxguest/vboxguest \
-        SRCROOT=/usr/src/vbox/amd64/src/vboxguest/vboxguest \
-        V=1 CONFIG_MODULE_SIG= CONFIG_MODULE_SIG_ALL= \
-        EXTRA_CFLAGS="-Wno-error" \
-        modules; \
-    make -C /usr/src/linux \
-        M=/usr/src/vbox/amd64/src/vboxguest/vboxsf \
-        SRCROOT=/usr/src/vbox/amd64/src/vboxguest/vboxsf \
-        V=1 CONFIG_MODULE_SIG= CONFIG_MODULE_SIG_ALL= \
-        EXTRA_CFLAGS="-Wno-error" \
-        modules; \
-	\
-	cp -v /usr/src/vbox/amd64/src/vboxguest/*.ko lib/modules/*/; \
-# create hacky symlink so these binaries can work as-is
-	ln -sT lib lib64; \
-	cp -v /usr/src/vbox/amd64/other/mount.vboxsf /usr/src/vbox/amd64/sbin/VBoxService sbin/; \
-	cp -v /usr/src/vbox/amd64/bin/VBoxControl bin/
+    cd /usr/src/vbox/amd64/src/vboxguest; \
+# Patch vbox for kernel v6.6+
+    sed -i 's/no_llseek/noop_llseek/' vboxguest/VBoxGuest-linux.c; \
+    sed -i 's/strlcpy/strscpy/' vboxguest/VBoxGuest-linux.c; \
+    printf '\n#ifndef p4d_large\n# define p4d_large(x) false\n#endif\n' \
+        '#ifndef pud_large\n# define pud_large(x) false\n#endif\n' \
+        '#ifndef pmd_large\n# define pmd_large(x) false\n#endif\n' \
+        >> vboxguest/r0drv/linux/memobj-r0drv-linux.c; \
+    sed -i 's/-Werror//' vboxguest/Makefile; \
+    make -C /usr/src/vbox/amd64/src/vboxguest \
+        -j"$(nproc)" \
+        KERN_DIR=/usr/src/linux \
+        KERN_VER="$(< /usr/src/linux/include/config/kernel.release)" \
+        vboxguest vboxsf; \
+    cp -v /usr/src/vbox/amd64/src/vboxguest/*.ko lib/modules/*/; \
+    ln -sT lib lib64; \
+    cp -v /usr/src/vbox/amd64/other/mount.vboxsf /usr/src/vbox/amd64/sbin/VBoxService sbin/; \
+    cp -v /usr/src/vbox/amd64/bin/VBoxControl bin/
 
 # scan all built modules for kernel loading
 RUN tcl-chroot depmod "$(< /usr/src/linux/include/config/kernel.release)"
