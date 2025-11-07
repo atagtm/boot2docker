@@ -98,15 +98,14 @@ update_env LINUX_VERSION "$kernelVersion"
 # https://download.virtualbox.org/virtualbox/
 vboxBase='7'
 
-#vboxVersion="$(wget -qO- 'https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT')"
-#vboxVersion="$(
-#	wget -qO- 'https://download.virtualbox.org/virtualbox/' \
-#		| grep -oE 'href="[0-9.]+/?"' \
-#		| cut -d'"' -f2 | cut -d/ -f1 \
-#		| grep -E "^$vboxBase[.]" \
-#		| tail -1
-#)"
-vboxVersion="7.0.26"
+vboxVersion="$(wget -qO- 'https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT')"
+vboxVersion="$(
+	wget -qO- 'https://download.virtualbox.org/virtualbox/' \
+		| grep -oE 'href="[0-9.]+/?"' \
+		| cut -d'"' -f2 | cut -d/ -f1 \
+		| grep -E "^$vboxBase[.]" \
+		| tail -1
+)"
 vboxSha256="$(
 	{
 		wget -qO- "https://download.virtualbox.org/virtualbox/$vboxVersion/SHA256SUMS" \

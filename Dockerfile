@@ -174,7 +174,7 @@ RUN tcl-tce-load bash; \
 	[ "$PS1" = '\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ ' ]
 
 # updated via "update.sh"
-ENV LINUX_VERSION="6.12.56"
+ENV LINUX_VERSION="6.12.57"
 
 RUN wget -O /linux.tar.xz "https://cdn.kernel.org/pub/linux/kernel/v${LINUX_VERSION%%.*}.x/linux-${LINUX_VERSION}.tar.xz"; \
 	wget -O /linux.tar.asc "https://cdn.kernel.org/pub/linux/kernel/v${LINUX_VERSION%%.*}.x/linux-${LINUX_VERSION}.tar.sign"; \
@@ -250,7 +250,7 @@ RUN setConfs="$(grep -vEh '^[#-]' /kernel-config.d/* | sort -u)"; \
 			fi; \
 		done; \
 	); \
-	make -C /usr/src/linux olddefconfig; \
+	make -C /usr/src/linux oldconfig; \
 	set +x; \
 	ret=; \
 	for conf in "${unsetConfs[@]}"; do \
@@ -283,14 +283,10 @@ RUN mkdir -p /tmp/iso/boot; \
 
 RUN tcl-tce-load \
 		acpid \
-		bash-completion \
 		ca-certificates \
-		curl \
 		e2fsprogs \
-		git \
 		iproute2 \
 		iptables \
-		ncursesw-terminfo \
 		nfs-utils \
 		openssh \
 		openssl \
@@ -315,9 +311,9 @@ RUN make -C /usr/src/linux INSTALL_HDR_PATH=/usr/local headers_install
 
 # http://download.virtualbox.org/virtualbox/
 # updated via "update.sh"
-ENV VBOX_VERSION="7.0.26"
+ENV VBOX_VERSION="7.2.4"
 # https://www.virtualbox.org/download/hashes/$VBOX_VERSION/SHA256SUMS
-ENV VBOX_SHA256="255baffe852b084f8c48dcdd43295028ddce2553e25ec7b670b0acf1173f5545"
+ENV VBOX_SHA256="66fa60b041fcda5d8b2ed22ba91bfafafaa3a5ff05c7d8ba01fbbe639669e153"
 # (VBoxGuestAdditions_X.Y.Z.iso SHA256, for verification)
 
 RUN wget -O /vbox.iso "https://download.virtualbox.org/virtualbox/$VBOX_VERSION/VBoxGuestAdditions_$VBOX_VERSION.iso"; \
@@ -343,7 +339,7 @@ RUN make -C /usr/src/vbox/amd64/src/vboxguest \
 # scan all built modules for kernel loading
 RUN tcl-chroot depmod "$(< /usr/src/linux/include/config/kernel.release)"
 
-ENV DOCKER_VERSION="28.5.1"
+ENV DOCKER_VERSION="28.5.2"
 
 # Get the Docker binaries with version that matches our boot2docker version.
 RUN DOCKER_CHANNEL='stable'; \
