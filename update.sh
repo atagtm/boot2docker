@@ -118,7 +118,7 @@ update_env VBOX_SHA256 "$vboxSha256"
 dockerVersion="$(
 	wget -qO- "https://api.github.com/repos/moby/moby/releases/latest" |
 	grep '"tag_name":' |
-	sed -E 's/.*"v([^"]+)".*/\1/'                
+	sed -E 's/.*"docker-v([^"]+)".*/\1/'                
 )"
 update_env DOCKER_VERSION "$dockerVersion"
 
