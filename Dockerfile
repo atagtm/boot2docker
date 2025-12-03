@@ -345,10 +345,10 @@ RUN set -eux; \
         KERN_DIR=/usr/src/linux \
         KERN_VER="$(< /usr/src/linux/include/config/kernel.release)" \
         vboxguest vboxsf; \
-    cp -v /usr/src/vbox/amd64/src/vboxguest/*.ko lib/modules/*/; \
+    cp -v /usr/src/vbox/amd64/src/vboxguest/*.ko /rootfs/lib/modules/*/; \
     ln -sT lib lib64; \
-    cp -v /usr/src/vbox/amd64/other/mount.vboxsf /usr/src/vbox/amd64/sbin/VBoxService sbin/; \
-    cp -v /usr/src/vbox/amd64/bin/VBoxControl bin/
+    cp -v /usr/src/vbox/amd64/other/mount.vboxsf /usr/src/vbox/amd64/sbin/VBoxService /rootfs/sbin/; \
+    cp -v /usr/src/vbox/amd64/bin/VBoxControl /rootfs/bin/
 
 # scan all built modules for kernel loading
 RUN tcl-chroot depmod "$(< /usr/src/linux/include/config/kernel.release)"
