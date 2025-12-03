@@ -250,7 +250,7 @@ RUN setConfs="$(grep -vEh '^[#-]' /kernel-config.d/* | sort -u)"; \
 			fi; \
 		done; \
 	); \
-	make -C /usr/src/linux oldconfig; \
+	make -C /usr/src/linux olddefconfig; \
 	set +x; \
 	ret=; \
 	for conf in "${unsetConfs[@]}"; do \
@@ -283,10 +283,14 @@ RUN mkdir -p /tmp/iso/boot; \
 
 RUN tcl-tce-load \
 		acpid \
+		bash-completion \
 		ca-certificates \
+		curl \
 		e2fsprogs \
+		git \
 		iproute2 \
 		iptables \
+		ncursesw-terminfo \
 		nfs-utils \
 		openssh \
 		openssl \
@@ -326,7 +330,17 @@ RUN wget -O /vbox.iso "https://download.virtualbox.org/virtualbox/$VBOX_VERSION/
 	rm /usr/src/vbox/VBoxGuestAdditions-*.tar.bz2; \
 	ln -sT "vboxguest-$VBOX_VERSION" /usr/src/vbox/amd64/src/vboxguest
 
-RUN make -C /usr/src/vbox/amd64/src/vboxguest \
+RUN set -eux; \
+    cd /usr/src/vbox/amd64/src/vboxguest; \
+# Patch vbox for kernel v6.6+
+    sed -i 's/no_llseek/noop_llseek/' vboxguest/VBoxGuest-linux.c; \
+    sed -i 's/strlcpy/strscpy/' vboxguest/VBoxGuest-linux.c; \
+    printf '\n#ifndef p4d_large\n# define p4d_large(x) false\n#endif\n' \
+        '#ifndef pud_large\n# define pud_large(x) false\n#endif\n' \
+        '#ifndef pmd_large\n# define pmd_large(x) false\n#endif\n' \
+        >> vboxguest/r0drv/linux/memobj-r0drv-linux.c; \
+    sed -i 's/-Werror//' vboxguest/Makefile; \
+    make -C /usr/src/vbox/amd64/src/vboxguest \
         -j"$(nproc)" \
         KERN_DIR=/usr/src/linux \
         KERN_VER="$(< /usr/src/linux/include/config/kernel.release)" \
@@ -339,7 +353,7 @@ RUN make -C /usr/src/vbox/amd64/src/vboxguest \
 # scan all built modules for kernel loading
 RUN tcl-chroot depmod "$(< /usr/src/linux/include/config/kernel.release)"
 
-ENV DOCKER_VERSION="29.1.2"tag_name": "docker-v29.1.2","
+ENV DOCKER_VERSION="29.1.2"
 
 # Get the Docker binaries with version that matches our boot2docker version.
 RUN DOCKER_CHANNEL='stable'; \
