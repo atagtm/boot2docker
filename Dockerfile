@@ -174,7 +174,7 @@ RUN tcl-tce-load bash; \
 	[ "$PS1" = '\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ ' ]
 
 # updated via "update.sh"
-ENV LINUX_VERSION="6.12.60"
+ENV LINUX_VERSION="6.12.66"
 
 RUN wget -O /linux.tar.xz "https://cdn.kernel.org/pub/linux/kernel/v${LINUX_VERSION%%.*}.x/linux-${LINUX_VERSION}.tar.xz"; \
 	wget -O /linux.tar.asc "https://cdn.kernel.org/pub/linux/kernel/v${LINUX_VERSION%%.*}.x/linux-${LINUX_VERSION}.tar.sign"; \
@@ -354,7 +354,7 @@ RUN set -eux; \
 # scan all built modules for kernel loading
 RUN tcl-chroot depmod "$(< /usr/src/linux/include/config/kernel.release)"
 
-ENV DOCKER_VERSION="29.1.2"
+ENV DOCKER_VERSION="29.1.5"
 
 # Get the Docker binaries with version that matches our boot2docker version.
 RUN DOCKER_CHANNEL='stable'; \
