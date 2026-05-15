@@ -3,7 +3,7 @@
 
 **Boot2Docker — no longer deprecated** — this is a **modernized revival** of the lightweight Linux distribution made to run [Docker](https://www.docker.com/) containers. It now focuses on:
 
-- Updated Linux Kernel with Tiny Core Linux 16.x
+- Updated Linux Kernel with Tiny Core Linux 17.x
 - Full **cgroup v2** support
 - Compatibility with **FreeBSD**, including support for VirtualBox and bhyve
 - Removal of outdated or unmaintained VM backends
@@ -18,7 +18,7 @@ Boot2Docker is a minimal Linux distribution that runs Docker containers out of t
 
 - ⚙️ Modern (6.12) Linux kernel (aligned with Docker compatibility)
 - 🐧 Based on [Tiny Core Linux 16.x](http://tinycorelinux.net/)
-- 🧠 Runs from RAM (~75MB ISO)
+- 🧠 Runs from RAM (~80MB ISO)
 - 📦 Docker preinstalled
 - 📂 Persistent storage via disk automount
 - 🔐 SSH key and Docker data persistence
