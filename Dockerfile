@@ -40,12 +40,12 @@ WORKDIR /rootfs
 # updated via "update.sh"
 ENV TCL_MIRRORS="http://repo.tinycorelinux.net http://distro.ibiblio.org/tinycorelinux"
 ENV TCL_MAJOR="17.x"
-ENV TCL_VERSION="17.0"
+ENV TCL_VERSION="17.1"
 
 # http://distro.ibiblio.org/tinycorelinux/8.x/x86_64/archive/8.2.1/distribution_files/rootfs64.gz.md5.txt
 # updated via "update.sh"
 ENV TCL_ROOTFS="rootfs64.gz"
-ENV TCL_ROOTFS_MD5="937e35270d61ca7f9c4290de9c1a8a33"
+ENV TCL_ROOTFS_MD5="d02529ab5ef6c9851f0579d698f1352e"
 
 COPY files/tce-load.patch files/udhcpc.patch /tcl-patches/
 
@@ -174,7 +174,7 @@ RUN tcl-tce-load bash; \
 	[ "$PS1" = '\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ ' ]
 
 # updated via "update.sh"
-ENV LINUX_VERSION="6.12.85"
+ENV LINUX_VERSION="6.12.115"
 
 RUN wget -O /linux.tar.xz "https://cdn.kernel.org/pub/linux/kernel/v${LINUX_VERSION%%.*}.x/linux-${LINUX_VERSION}.tar.xz"; \
 	wget -O /linux.tar.asc "https://cdn.kernel.org/pub/linux/kernel/v${LINUX_VERSION%%.*}.x/linux-${LINUX_VERSION}.tar.sign"; \
@@ -315,9 +315,9 @@ RUN make -C /usr/src/linux INSTALL_HDR_PATH=/usr/local headers_install
 
 # http://download.virtualbox.org/virtualbox/
 # updated via "update.sh"
-ENV VBOX_VERSION="7.2.8"
+ENV VBOX_VERSION="7.2.22"
 # https://www.virtualbox.org/download/hashes/$VBOX_VERSION/SHA256SUMS
-ENV VBOX_SHA256="169acb9361ade42d32500f51b48ad366fdfdb094b5e3fb422d640c1416a6b216"
+ENV VBOX_SHA256="fc41354d8b974051fa33ca5a4f9c999a58c6e0dfc595b02a924a544392234b3d"
 # (VBoxGuestAdditions_X.Y.Z.iso SHA256, for verification)
 
 RUN wget -O /vbox.iso "https://download.virtualbox.org/virtualbox/$VBOX_VERSION/VBoxGuestAdditions_$VBOX_VERSION.iso"; \
@@ -354,7 +354,7 @@ RUN set -eux; \
 # scan all built modules for kernel loading
 RUN tcl-chroot depmod "$(< /usr/src/linux/include/config/kernel.release)"
 
-ENV DOCKER_VERSION="29.4.1"
+ENV DOCKER_VERSION="29.9.3"
 
 # Get the Docker binaries with version that matches our boot2docker version.
 RUN DOCKER_CHANNEL='stable'; \
@@ -428,11 +428,10 @@ RUN awk -F: ' \
 
 # ssh config prep
 RUN [ ! -f usr/local/etc/sshd_config ]; \
-	sed -r \
+	sed -ri \
 		-e 's/^#(UseDNS[[:space:]])/\1/' \
 		-e 's/^#(PermitUserEnvironment)[[:space:]].*$/\1 yes/' \
-		usr/local/etc/ssh/sshd_config.orig \
-		> usr/local/etc/ssh/sshd_config; \
+		usr/local/etc/ssh/sshd_config; \
 	grep '^UseDNS no$' usr/local/etc/ssh/sshd_config; \
 # "This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
 # (and there are several important binaries in /usr/local/sbin that "docker-machine" needs to invoke like "ip" and "iptables")
