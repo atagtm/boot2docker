@@ -428,11 +428,10 @@ RUN awk -F: ' \
 
 # ssh config prep
 RUN [ ! -f usr/local/etc/sshd_config ]; \
-	sed -r \
+	sed -ri \
 		-e 's/^#(UseDNS[[:space:]])/\1/' \
 		-e 's/^#(PermitUserEnvironment)[[:space:]].*$/\1 yes/' \
-		usr/local/etc/ssh/sshd_config.orig \
-		> usr/local/etc/ssh/sshd_config; \
+		usr/local/etc/ssh/sshd_config; \
 	grep '^UseDNS no$' usr/local/etc/ssh/sshd_config; \
 # "This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
 # (and there are several important binaries in /usr/local/sbin that "docker-machine" needs to invoke like "ip" and "iptables")
